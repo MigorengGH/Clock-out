@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Clock Out & Overtime Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏰</text></svg>">
+  <!-- Lucide Icons Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <i data-lucide="timer" class="lucide-icon"></i>
+        </div>
+        <div>
+          <h1>Shift & Overtime Calculator</h1>
+          <p class="subtitle">Standard shift: 9h 30m • Min OT: 1h 10m (+30m intervals)</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="icon-btn" title="Toggle dark/light theme" aria-label="Toggle theme">
+          <span class="theme-icon">
+            <i data-lucide="moon" class="lucide-icon"></i>
+          </span>
+        </button>
+        <button id="formatToggle" class="pill-btn" title="Toggle 12h / 24h format">
+          <i data-lucide="clock" class="lucide-icon"></i>
+          <span id="formatLabel">12-Hour</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      <!-- Input & Current Status Card -->
+      <section class="card input-card">
+        <div class="card-header">
+          <h2>
+            <i data-lucide="log-in" class="lucide-icon section-icon"></i>
+            1. Set Clock-In Time
+          </h2>
+          <span class="live-badge" id="liveClockBadge">Live: --:--:--</span>
+        </div>
+
+        <div class="input-group-wrapper">
+          <label for="clockInInput" class="input-label">What time did you clock in?</label>
+          <div class="time-input-container">
+            <button id="btnMinus15" class="icon-btn time-step-btn" title="Minus 15 minutes">-15m</button>
+            <input type="time" id="clockInInput" class="time-input" required>
+            <button id="btnPlus15" class="icon-btn time-step-btn" title="Plus 15 minutes">+15m</button>
+            <button id="btnSetNow" class="btn btn-secondary" title="Set to current time">
+              <i data-lucide="map-pin" class="lucide-icon"></i>
+              Right Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick preset chips -->
+        <div class="quick-presets">
+          <span class="presets-label">Common Presets:</span>
+          <div class="preset-chips">
+            <button class="chip" data-time="07:00">07:00 AM</button>
+            <button class="chip" data-time="07:30">07:30 AM</button>
+            <button class="chip" data-time="08:00">08:00 AM</button>
+            <button class="chip" data-time="08:30">08:30 AM</button>
+            <button class="chip" data-time="09:00">09:00 AM</button>
+            <button class="chip" data-time="09:30">09:30 AM</button>
+          </div>
+        </div>
+
+        <!-- Live Shift Progress Widget -->
+        <div class="progress-section" id="progressSection">
+          <div class="progress-info">
+            <span id="statusMessage">Calculating status...</span>
+            <span id="statusPercentage" class="mono font-semibold">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+          <div class="time-countdown" id="timeCountdown"></div>
+        </div>
+      </section>
+
+      <!-- Standard Clock Out Highlight -->
+      <section class="card standard-card">
+        <div class="card-header">
+          <h2>
+            <i data-lucide="log-out" class="lucide-icon section-icon"></i>
+            2. Standard Clock Out
+          </h2>
+          <span class="tag tag-blue">9h 30m Shift</span>
+        </div>
+
+        <div class="hero-time-box">
+          <div class="hero-label">Regular Work Ends At</div>
+          <div class="hero-time" id="standardClockOutTime">--:-- --</div>
+          <div class="hero-sub" id="standardClockOutSub">e.g. 7:00 AM → 4:30 PM</div>
+        </div>
+
+        <div class="shift-breakdown">
+          <div class="breakdown-item">
+            <span class="b-label">Clock In</span>
+            <span class="b-val mono" id="summaryClockIn">--:--</span>
+          </div>
+          <div class="breakdown-divider">+</div>
+          <div class="breakdown-item">
+            <span class="b-label">Shift Duration</span>
+            <span class="b-val mono">9 hrs 30 mins</span>
+          </div>
+          <div class="breakdown-divider">=</div>
+          <div class="breakdown-item highlight">
+            <span class="b-label">Clock Out</span>
+            <span class="b-val mono" id="summaryClockOut">--:--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Overtime Schedule Card -->
+      <section class="card ot-card full-width">
+        <div class="card-header">
+          <div class="title-with-badge">
+            <h2>
+              <i data-lucide="trending-up" class="lucide-icon section-icon"></i>
+              3. Overtime (OT) Milestones
+            </h2>
+            <span class="tag tag-amber">Min 1h 10m • Step +30m</span>
+          </div>
+          <div class="ot-hint">Overtime starts after a minimum of 1h 10m past standard shift</div>
+        </div>
+
+        <!-- Quick Summary Cards for OT -->
+        <div class="ot-tiers-grid" id="otTiersGrid">
+          <!-- Dynamically populated cards for OT milestones -->
+        </div>
+
+        <!-- Overtime Table for clear overview -->
+        <div class="table-responsive">
+          <table class="ot-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>OT Duration</th>
+                <th>Clock Out By</th>
+                <th>Total Work Time</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="otTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Custom Departure Time Checker -->
+      <section class="card checker-card full-width">
+        <div class="card-header">
+          <h2>
+            <i data-lucide="calculator" class="lucide-icon section-icon"></i>
+            4. Custom Departure Checker
+          </h2>
+          <span class="tag tag-purple">Real-time Check</span>
+        </div>
+        <p class="section-desc">Planning to clock out at a specific time? Check your exact recognized overtime according to the 1h 10m minimum and 30-minute block rule.</p>
+
+        <div class="checker-controls">
+          <div class="time-input-container">
+            <label for="customOutInput" class="input-label">Target Departure Time:</label>
+            <input type="time" id="customOutInput" class="time-input">
+          </div>
+          <div class="checker-result-box" id="checkerResultBox">
+            <div class="checker-result-title" id="checkerResultTitle">Enter departure time</div>
+            <div class="checker-result-desc" id="checkerResultDesc">See your overtime calculation results instantly.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>
+        <i data-lucide="info" class="lucide-icon footer-icon"></i>
+        <strong>Rule Summary:</strong> Standard shift = 9h 30m. Minimum OT requirement = 1h 10m. Subsequent OT accumulates in 30-minute tiers (+1h 40m, +2h 10m, +2h 40m, etc.).
+      </p>
+    </footer>
+  </div>
+
+  <!-- Notification Audio Element (Data URI subtle chime) -->
+  <audio id="chimeSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLI7Z8s+IKg44k9nyyoEuEUCT2fLGgS4RQJPZ8saBLhFAk9nyxoEuEUCT2fLGgS4R" type="audio/wav">
+  </audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
