@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Work Clock Out & Overtime Calculator</title>
+  <title>Shift & Overtime Calculator — Bangi Workplace Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏰</text></svg>">
   <!-- Lucide Icons Script -->
@@ -14,49 +14,199 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- Header -->
+    <!-- Top Header -->
     <header class="app-header">
       <div class="brand">
         <div class="brand-icon">
           <i data-lucide="timer" class="lucide-icon"></i>
         </div>
         <div>
-          <h1>Shift & Overtime Calculator</h1>
-          <p class="subtitle">Standard shift: 9h 30m • Min OT: 1h 10m (+30m intervals)</p>
+          <div class="brand-title-row">
+            <h1>Shift & Overtime Manager</h1>
+            <span class="location-badge" title="Localized for Bangi, Selangor">
+              <i data-lucide="map-pin" class="lucide-icon"></i>
+              Bangi, Selangor
+            </span>
+          </div>
+          <p class="subtitle">Shift: 9h 30m • Clock-In Window: 7:00 AM – 9:30 AM • Min OT: 1h 10m</p>
         </div>
       </div>
       <div class="header-actions">
+        <div class="live-clock-pill" id="liveClockBadge">
+          <span class="pulse-dot"></span>
+          <span id="liveClockText">Live: --:--:--</span>
+        </div>
+        <button id="formatToggle" class="pill-btn" title="Toggle 12h / 24h format" aria-label="Toggle time format">
+          <i data-lucide="clock" class="lucide-icon"></i>
+          <span id="formatLabel">12-Hour</span>
+        </button>
         <button id="themeToggle" class="icon-btn" title="Toggle dark/light theme" aria-label="Toggle theme">
           <span class="theme-icon">
             <i data-lucide="moon" class="lucide-icon"></i>
           </span>
         </button>
-        <button id="formatToggle" class="pill-btn" title="Toggle 12h / 24h format">
-          <i data-lucide="clock" class="lucide-icon"></i>
-          <span id="formatLabel">12-Hour</span>
+        <button id="btnRefreshData" class="icon-btn" title="Refresh Bangi Prayer & Weather" aria-label="Refresh data">
+          <i data-lucide="refresh-cw" class="lucide-icon"></i>
         </button>
       </div>
     </header>
 
-    <!-- Main Grid -->
-    <main class="dashboard-grid">
-      <!-- Input & Current Status Card -->
-      <section class="card input-card">
+    <!-- Bangi Workplace Daily Hub: Solat Prayer Times & Weather Forecast -->
+    <section class="bangi-hub-grid">
+      <!-- Waktu Solat Bangi Card -->
+      <div class="card prayer-card">
         <div class="card-header">
-          <h2>
-            <i data-lucide="log-in" class="lucide-icon section-icon"></i>
-            1. Set Clock-In Time
-          </h2>
-          <span class="live-badge" id="liveClockBadge">Live: --:--:--</span>
+          <div class="title-with-badge">
+            <h2>
+              <i data-lucide="compass" class="lucide-icon section-icon prayer-icon"></i>
+              Waktu Solat Bangi
+            </h2>
+            <span class="tag tag-amber" id="prayerZoneTag">JAKIM SGR01</span>
+          </div>
+          <div class="next-prayer-pill" id="nextPrayerPill">
+            <span class="next-prayer-label">Next:</span>
+            <strong id="nextPrayerName">--</strong>
+            <span class="next-prayer-countdown" id="nextPrayerCountdown">in --m</span>
+          </div>
         </div>
 
+        <!-- Prayer Times Grid -->
+        <div class="prayer-times-grid" id="prayerTimesGrid">
+          <div class="prayer-slot" id="prayer-subuh">
+            <span class="prayer-name">Subuh</span>
+            <span class="prayer-time mono" id="time-subuh">--:--</span>
+            <span class="prayer-status">Fajr</span>
+          </div>
+          <div class="prayer-slot" id="prayer-syuruk">
+            <span class="prayer-name">Syuruk</span>
+            <span class="prayer-time mono" id="time-syuruk">--:--</span>
+            <span class="prayer-status">Sunrise</span>
+          </div>
+          <div class="prayer-slot" id="prayer-zohor">
+            <span class="prayer-name">Zohor</span>
+            <span class="prayer-time mono" id="time-zohor">--:--</span>
+            <span class="prayer-status">Dhuhr</span>
+          </div>
+          <div class="prayer-slot" id="prayer-asar">
+            <span class="prayer-name">Asar</span>
+            <span class="prayer-time mono" id="time-asar">--:--</span>
+            <span class="prayer-status">Asr</span>
+          </div>
+          <div class="prayer-slot" id="prayer-maghrib">
+            <span class="prayer-name">Maghrib</span>
+            <span class="prayer-time mono" id="time-maghrib">--:--</span>
+            <span class="prayer-status">Sunset</span>
+          </div>
+          <div class="prayer-slot" id="prayer-isyak">
+            <span class="prayer-name">Isyak</span>
+            <span class="prayer-time mono" id="time-isyak">--:--</span>
+            <span class="prayer-status">Isha</span>
+          </div>
+        </div>
+
+        <!-- Shift Prayer Note -->
+        <div class="prayer-shift-advisory" id="prayerShiftAdvisory">
+          <i data-lucide="info" class="lucide-icon"></i>
+          <span id="prayerShiftNote">Calculating prayer times during your work shift...</span>
+        </div>
+      </div>
+
+      <!-- Bangi Weather Forecast Card -->
+      <div class="card weather-card">
+        <div class="card-header">
+          <div class="title-with-badge">
+            <h2>
+              <i data-lucide="cloud-sun" class="lucide-icon section-icon weather-icon"></i>
+              Cuaca Bangi (Weather)
+            </h2>
+            <span class="tag tag-blue" id="weatherSourceTag">Live Forecast</span>
+          </div>
+          <span class="weather-date-pill" id="weatherDatePill">Today</span>
+        </div>
+
+        <div class="weather-content-wrapper">
+          <div class="weather-hero">
+            <div class="weather-temp-group">
+              <div class="weather-icon-display" id="weatherHeroIcon">
+                <i data-lucide="cloud-sun" class="lucide-icon"></i>
+              </div>
+              <div>
+                <div class="current-temp" id="currentTemp">--°C</div>
+                <div class="feels-like" id="feelsLike">Feels like --°C</div>
+              </div>
+            </div>
+            <div class="weather-condition-box">
+              <span class="weather-condition-text" id="weatherCondition">Loading weather...</span>
+              <span class="weather-temp-range" id="tempRange">Min: --°C • Max: --°C</span>
+            </div>
+          </div>
+
+          <div class="weather-metrics">
+            <div class="metric-item">
+              <i data-lucide="droplets" class="lucide-icon"></i>
+              <div class="metric-details">
+                <span class="m-title">Humidity</span>
+                <span class="m-val mono" id="weatherHumidity">--%</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <i data-lucide="cloud-rain" class="lucide-icon"></i>
+              <div class="metric-details">
+                <span class="m-title">Rain Chance</span>
+                <span class="m-val mono" id="weatherRainProb">--%</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <i data-lucide="wind" class="lucide-icon"></i>
+              <div class="metric-details">
+                <span class="m-title">Wind Speed</span>
+                <span class="m-val mono" id="weatherWind">-- km/h</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="weather-shift-alert" id="weatherShiftAlert">
+            <i data-lucide="shield-check" class="lucide-icon"></i>
+            <span id="weatherAdviceText">Checking commute & shift weather outlook...</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- 1. Clock-In Time & Punctuality Inspector -->
+      <section class="card input-card">
+        <div class="card-header">
+          <div class="title-with-badge">
+            <h2>
+              <i data-lucide="log-in" class="lucide-icon section-icon"></i>
+              1. Worker Clock-In
+            </h2>
+            <span class="punctuality-badge" id="punctualityBadge">Checking...</span>
+          </div>
+          <span class="tag tag-purple">Allowed: 7:00 – 9:30 AM</span>
+        </div>
+
+        <!-- Punctuality Alert Banner (On-Time, Late, Early) -->
+        <div class="punctuality-banner" id="punctualityBanner">
+          <div class="banner-icon-col" id="bannerIconCol">
+            <i data-lucide="check-circle-2" class="lucide-icon"></i>
+          </div>
+          <div class="banner-text-col">
+            <strong id="bannerTitle">On-Time Clock-In</strong>
+            <p id="bannerDesc">Worker arrived within the permitted 7:00 AM – 9:30 AM schedule window.</p>
+          </div>
+        </div>
+
+        <!-- Time Picker Container -->
         <div class="input-group-wrapper">
-          <label for="clockInInput" class="input-label">What time did you clock in?</label>
+          <label for="clockInInput" class="input-label">Clock-In Time (7:00 AM – 9:30 AM cutoff):</label>
           <div class="time-input-container">
             <button id="btnMinus15" class="icon-btn time-step-btn" title="Minus 15 minutes">-15m</button>
             <input type="time" id="clockInInput" class="time-input" required>
             <button id="btnPlus15" class="icon-btn time-step-btn" title="Plus 15 minutes">+15m</button>
-            <button id="btnSetNow" class="btn btn-secondary" title="Set to current time">
+            <button id="btnSetNow" class="btn btn-secondary" title="Set to current local time">
               <i data-lucide="map-pin" class="lucide-icon"></i>
               Right Now
             </button>
@@ -65,14 +215,15 @@
 
         <!-- Quick preset chips -->
         <div class="quick-presets">
-          <span class="presets-label">Common Presets:</span>
+          <span class="presets-label">Punctuality Presets:</span>
           <div class="preset-chips">
-            <button class="chip" data-time="07:00">07:00 AM</button>
-            <button class="chip" data-time="07:30">07:30 AM</button>
-            <button class="chip" data-time="08:00">08:00 AM</button>
-            <button class="chip" data-time="08:30">08:30 AM</button>
-            <button class="chip" data-time="09:00">09:00 AM</button>
-            <button class="chip" data-time="09:30">09:30 AM</button>
+            <button class="chip chip-ontime" data-time="07:00">07:00 AM</button>
+            <button class="chip chip-ontime" data-time="07:30">07:30 AM</button>
+            <button class="chip chip-ontime" data-time="08:00">08:00 AM</button>
+            <button class="chip chip-ontime" data-time="08:30">08:30 AM</button>
+            <button class="chip chip-ontime" data-time="09:00">09:00 AM</button>
+            <button class="chip chip-cutoff" data-time="09:30" title="Last on-time clock-in minute">09:30 AM (Cutoff)</button>
+            <button class="chip chip-late" data-time="09:45" title="Test late arrival status">09:45 AM (Late Demo)</button>
           </div>
         </div>
 
@@ -89,18 +240,21 @@
         </div>
       </section>
 
-      <!-- Standard Clock Out Highlight -->
+      <!-- 2. Standard Clock Out Highlight -->
       <section class="card standard-card">
         <div class="card-header">
           <h2>
             <i data-lucide="log-out" class="lucide-icon section-icon"></i>
             2. Standard Clock Out
           </h2>
-          <span class="tag tag-blue">9h 30m Shift</span>
+          <span class="tag tag-blue">Standard 9h 30m</span>
         </div>
 
-        <div class="hero-time-box">
-          <div class="hero-label">Regular Work Ends At</div>
+        <div class="hero-time-box" id="heroTimeBox">
+          <div class="hero-label-row">
+            <span class="hero-label">Regular Work Ends At</span>
+            <span class="hero-late-tag" id="heroLateTag" style="display: none;">Late Clock-In</span>
+          </div>
           <div class="hero-time" id="standardClockOutTime">--:-- --</div>
           <div class="hero-sub" id="standardClockOutSub">e.g. 7:00 AM → 4:30 PM</div>
         </div>
@@ -113,7 +267,7 @@
           <div class="breakdown-divider">+</div>
           <div class="breakdown-item">
             <span class="b-label">Shift Duration</span>
-            <span class="b-val mono">9 hrs 30 mins</span>
+            <span class="b-val mono">9h 30m</span>
           </div>
           <div class="breakdown-divider">=</div>
           <div class="breakdown-item highlight">
@@ -121,9 +275,16 @@
             <span class="b-val mono" id="summaryClockOut">--:--</span>
           </div>
         </div>
+
+        <div class="quick-copy-strip">
+          <button class="btn btn-outline-full" id="btnCopyStandardTime">
+            <i data-lucide="copy" class="lucide-icon"></i>
+            Copy Standard Clock-Out Time
+          </button>
+        </div>
       </section>
 
-      <!-- Overtime Schedule Card -->
+      <!-- 3. Overtime Schedule Card -->
       <section class="card ot-card full-width">
         <div class="card-header">
           <div class="title-with-badge">
@@ -133,7 +294,7 @@
             </h2>
             <span class="tag tag-amber">Min 1h 10m • Step +30m</span>
           </div>
-          <div class="ot-hint">Overtime starts after a minimum of 1h 10m past standard shift</div>
+          <div class="ot-hint">Overtime qualifies only after a minimum of 1 hour 10 minutes past standard shift</div>
         </div>
 
         <!-- Quick Summary Cards for OT -->
@@ -161,43 +322,70 @@
         </div>
       </section>
 
-      <!-- Custom Departure Time Checker -->
+      <!-- 4. Custom Departure Time Checker -->
       <section class="card checker-card full-width">
         <div class="card-header">
-          <h2>
-            <i data-lucide="calculator" class="lucide-icon section-icon"></i>
-            4. Custom Departure Checker
-          </h2>
-          <span class="tag tag-purple">Real-time Check</span>
+          <div class="title-with-badge">
+            <h2>
+              <i data-lucide="calculator" class="lucide-icon section-icon"></i>
+              4. Custom Departure Checker
+            </h2>
+            <span class="tag tag-purple">Real-time Check</span>
+          </div>
+          <span class="ot-hint">Test any departure time to verify recognized overtime tiers</span>
         </div>
-        <p class="section-desc">Planning to clock out at a specific time? Check your exact recognized overtime according to the 1h 10m minimum and 30-minute block rule.</p>
+        <p class="section-desc">Planning to leave at a specific time? Check your exact recognized overtime according to the 1h 10m minimum threshold and 30-minute block rules.</p>
 
         <div class="checker-controls">
           <div class="time-input-container">
-            <label for="customOutInput" class="input-label">Target Departure Time:</label>
+            <label for="customOutInput" class="input-label">Planned Departure Time:</label>
             <input type="time" id="customOutInput" class="time-input">
           </div>
           <div class="checker-result-box" id="checkerResultBox">
             <div class="checker-result-title" id="checkerResultTitle">Enter departure time</div>
-            <div class="checker-result-desc" id="checkerResultDesc">See your overtime calculation results instantly.</div>
+            <div class="checker-result-desc" id="checkerResultDesc">Select a planned departure time above to see overtime calculation results.</div>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer with Rules Summary -->
     <footer class="app-footer">
-      <p>
-        <i data-lucide="info" class="lucide-icon footer-icon"></i>
-        <strong>Rule Summary:</strong> Standard shift = 9h 30m. Minimum OT requirement = 1h 10m. Subsequent OT accumulates in 30-minute tiers (+1h 40m, +2h 10m, +2h 40m, etc.).
-      </p>
+      <div class="footer-rules-grid">
+        <div class="rule-col">
+          <div class="rule-title">
+            <i data-lucide="clock" class="lucide-icon"></i>
+            <strong>Clock-In Policy</strong>
+          </div>
+          <p>Worker clock-in window is strictly <strong>7:00 AM – 9:30 AM</strong>. Any clock-in past 9:30 AM is logged as <strong>Late Arrival</strong>.</p>
+        </div>
+        <div class="rule-col">
+          <div class="rule-title">
+            <i data-lucide="timer" class="lucide-icon"></i>
+            <strong>Standard Shift</strong>
+          </div>
+          <p>Standard work duty is <strong>9 hours 30 minutes</strong>. Full duration is required regardless of start time.</p>
+        </div>
+        <div class="rule-col">
+          <div class="rule-title">
+            <i data-lucide="trending-up" class="lucide-icon"></i>
+            <strong>Overtime (OT) Rules</strong>
+          </div>
+          <p>Minimum OT requirement is <strong>1 hour 10 minutes</strong>. Subsequent tiers accrue in <strong>30-minute increments</strong>.</p>
+        </div>
+        <div class="rule-col">
+          <div class="rule-title">
+            <i data-lucide="map-pin" class="lucide-icon"></i>
+            <strong>Bangi Workplace Sync</strong>
+          </div>
+          <p>Integrated with official <strong>JAKIM SGR01</strong> Waktu Solat & real-time Bangi meteorological weather telemetry.</p>
+        </div>
+      </div>
+      <div class="footer-bottom-line">
+        Shift & Overtime Calculator • Built for Malaysian Workplace Shifts in Bangi, Selangor
+      </div>
     </footer>
   </div>
-
-  <!-- Notification Audio Element (Data URI subtle chime) -->
-  <audio id="chimeSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLI7Z8s+IKg44k9nyyoEuEUCT2fLGgS4RQJPZ8saBLhFAk9nyxoEuEUCT2fLGgS4R" type="audio/wav">
-  </audio>
 
   <script src="app.js"></script>
 </body>
