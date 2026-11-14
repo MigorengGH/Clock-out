@@ -108,6 +108,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--apple-bg);
@@ -115,6 +120,8 @@ body {
   line-height: 1.47059;
   font-size: 15px;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
   padding: 24px 16px 48px;
   transition: background-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
@@ -129,10 +136,13 @@ body {
 
 .app-container {
   max-width: 1040px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 /* Lucide Icon Standard */
@@ -155,6 +165,8 @@ body {
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
+  width: 100%;
+  min-width: 0;
 }
 
 .brand {
@@ -289,11 +301,13 @@ body {
   transform: scale(0.96);
 }
 
-/* Bangi Local Hub Grid (Prayer & Weather) */
+/* Bangi Local Hub Grid (Prayer & Weather) - Strict minmax to prevent blowout */
 .bangi-hub-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 .card {
@@ -305,6 +319,10 @@ body {
   flex-direction: column;
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 .card:hover {
@@ -315,9 +333,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .title-with-badge {
@@ -325,6 +344,7 @@ body {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .card-header h2 {
@@ -341,6 +361,7 @@ body {
   height: 18px;
   margin-right: 6px;
   color: var(--system-blue);
+  flex-shrink: 0;
 }
 
 .prayer-icon {
@@ -361,6 +382,7 @@ body {
   letter-spacing: 0.04em;
   padding: 3px 8px;
   border-radius: var(--radius-pill);
+  white-space: nowrap;
 }
 
 .tag-blue { background: var(--system-blue-bg); color: var(--system-blue); border: 1px solid var(--system-blue-border); }
@@ -381,6 +403,7 @@ body {
   border-radius: var(--radius-pill);
   font-size: 0.78rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .next-prayer-countdown {
@@ -391,38 +414,41 @@ body {
 
 .prayer-times-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+  width: 100%;
 }
 
 .prayer-slot {
   background: var(--apple-card-subtle);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-md);
-  padding: 10px 6px;
+  padding: 10px 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 3px;
+  min-width: 0;
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .prayer-slot .prayer-name {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: var(--apple-text-secondary);
 }
 
 .prayer-slot .prayer-time {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--apple-text);
+  white-space: nowrap;
 }
 
 .prayer-slot .prayer-status {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: var(--apple-text-muted);
 }
 
@@ -466,7 +492,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Bangi Weather Styling */
+/* Bangi Weather Styling (Apple Weather Compact Proportions) */
 .weather-date-pill {
   font-size: 0.75rem;
   font-weight: 600;
@@ -475,33 +501,40 @@ body {
   border: 1px solid var(--apple-border);
   padding: 3px 10px;
   border-radius: var(--radius-pill);
+  white-space: nowrap;
 }
 
 .weather-content-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .weather-hero {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   background: var(--apple-card-subtle);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-lg);
-  padding: 14px 18px;
+  padding: 12px 16px;
+  width: 100%;
+  min-width: 0;
 }
 
 .weather-temp-group {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .weather-icon-display {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -509,16 +542,17 @@ body {
   color: var(--system-blue);
   border-radius: var(--radius-md);
   border: 1px solid var(--system-blue-border);
+  flex-shrink: 0;
 }
 
 .weather-icon-display .lucide-icon {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .current-temp {
   font-family: var(--font-mono);
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 700;
   color: var(--apple-text);
   line-height: 1.1;
@@ -526,48 +560,53 @@ body {
 }
 
 .feels-like {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--apple-text-muted);
   margin-top: 2px;
 }
 
 .weather-condition-box {
   text-align: right;
+  min-width: 0;
 }
 
 .weather-condition-text {
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--apple-text);
 }
 
 .weather-temp-range {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--apple-text-muted);
   margin-top: 2px;
 }
 
 .weather-metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 .metric-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--apple-card-subtle);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-md);
-  padding: 9px 12px;
+  padding: 8px 10px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .metric-item .lucide-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   color: var(--system-blue);
   flex-shrink: 0;
 }
@@ -575,20 +614,25 @@ body {
 .metric-details {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .metric-details .m-title {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--apple-text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .metric-details .m-val {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--apple-text);
+  white-space: nowrap;
 }
 
 /* Apple Weather Style: Hourly Forecast Horizontal Scroll */
@@ -596,7 +640,11 @@ body {
   background: var(--apple-card-subtle);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-lg);
-  padding: 12px 14px;
+  padding: 10px 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .hourly-forecast-header {
@@ -604,11 +652,12 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  padding: 0 4px;
+  padding: 0 2px;
+  min-width: 0;
 }
 
 .hourly-header-title {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -624,18 +673,24 @@ body {
 }
 
 .hourly-header-info {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--apple-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hourly-scroll-strip {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  padding: 4px 2px 8px;
+  padding: 4px 2px 6px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Hide default scrollbar */
+  scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .hourly-scroll-strip::-webkit-scrollbar {
@@ -643,17 +698,18 @@ body {
 }
 
 .hourly-slot {
-  min-width: 66px;
-  flex-shrink: 0;
+  min-width: 58px;
+  max-width: 66px;
+  flex: 0 0 auto;
   background: var(--apple-card);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-md);
-  padding: 10px 6px;
+  padding: 8px 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 4px;
+  gap: 3px;
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
 }
@@ -674,14 +730,14 @@ body {
 }
 
 .hourly-time-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--apple-text-secondary);
 }
 
 .hourly-icon-wrap {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -689,12 +745,12 @@ body {
 }
 
 .hourly-icon-wrap .lucide-icon {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
 }
 
 .hourly-rain-prob {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 600;
   height: 12px;
   color: transparent;
@@ -705,18 +761,19 @@ body {
 }
 
 .hourly-temp-label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--apple-text);
 }
 
 .hourly-shift-badge {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: var(--radius-pill);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .hourly-shift-badge.badge-in {
@@ -736,14 +793,14 @@ body {
   background: var(--apple-card-subtle);
   border: 1px solid var(--apple-border);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
-  font-size: 0.82rem;
+  padding: 9px 12px;
+  font-size: 0.8rem;
   color: var(--apple-text-secondary);
 }
 
 .weather-shift-alert .lucide-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   color: var(--system-blue);
   flex-shrink: 0;
 }
@@ -751,8 +808,10 @@ body {
 /* Main Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 20px;
+  width: 100%;
+  min-width: 0;
 }
 
 .input-card {
@@ -859,6 +918,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .input-label {
@@ -868,14 +929,15 @@ body {
 }
 
 .input-hint-label {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: var(--apple-text-muted);
 }
 
 .time-input-container {
   display: flex;
   gap: 10px;
-  align-items: stretch;
+  align-items: center;
+  width: 100%;
 }
 
 /* Apple Stepper Control (Arrow Down - Time Input - Arrow Up) */
@@ -889,6 +951,7 @@ body {
   overflow: hidden;
   box-shadow: var(--shadow-subtle);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
 }
 
 .apple-stepper-control:focus-within {
@@ -944,6 +1007,7 @@ body {
   padding: 10px 14px;
   text-align: center;
   flex: 1;
+  min-width: 0;
   outline: none;
 }
 
@@ -987,6 +1051,7 @@ body {
 .apple-now-btn {
   border-radius: var(--radius-lg);
   padding: 0 16px;
+  height: 48px;
 }
 
 .btn-outline-full {
@@ -1242,6 +1307,7 @@ body {
   overflow-x: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--apple-border);
+  -webkit-overflow-scrolling: touch;
 }
 
 .ot-table {
@@ -1249,6 +1315,7 @@ body {
   border-collapse: collapse;
   text-align: left;
   font-size: 0.88rem;
+  min-width: 580px;
 }
 
 .ot-table th, .ot-table td {
@@ -1365,19 +1432,22 @@ body {
   border-radius: var(--radius-xl);
   padding: 24px;
   box-shadow: var(--shadow-card);
+  width: 100%;
 }
 
 .footer-rules-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .rule-col {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .rule-title {
@@ -1393,6 +1463,7 @@ body {
   width: 15px;
   height: 15px;
   color: var(--system-blue);
+  flex-shrink: 0;
 }
 
 .rule-col p {
@@ -1409,10 +1480,10 @@ body {
   color: var(--apple-text-muted);
 }
 
-/* Responsive Adjustments */
+/* Responsive Adjustments for PC, Tablet & Mobile */
 @media (max-width: 900px) {
   .bangi-hub-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .input-card, .standard-card {
@@ -1424,21 +1495,27 @@ body {
   }
 
   .footer-rules-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 600px) {
   body {
-    padding: 16px 12px 36px;
+    padding: 12px 10px 32px;
   }
 
   .card {
-    padding: 18px 16px;
+    padding: 16px 14px;
+    border-radius: var(--radius-lg);
   }
 
   .app-header {
-    padding: 12px 16px;
+    padding: 12px 14px;
+    border-radius: var(--radius-lg);
+  }
+
+  .brand h1 {
+    font-size: 1.15rem;
   }
 
   .hero-time {
@@ -1446,7 +1523,37 @@ body {
   }
 
   .prayer-times-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .weather-metrics {
+    gap: 6px;
+  }
+
+  .metric-item {
+    padding: 6px 6px;
+  }
+
+  .metric-details .m-title {
+    font-size: 0.62rem;
+  }
+
+  .metric-details .m-val {
+    font-size: 0.8rem;
+  }
+
+  .ot-tiers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ot-card-item {
+    padding: 12px 10px;
+  }
+
+  .ot-out-time {
+    font-size: 1.4rem;
   }
 
   .footer-rules-grid {
@@ -1460,5 +1567,26 @@ body {
 
   .breakdown-divider {
     transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 440px) {
+  .time-input-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .apple-stepper-control {
+    width: 100%;
+  }
+
+  .apple-now-btn {
+    width: 100%;
+    padding: 10px;
+    justify-content: center;
+  }
+
+  .ot-tiers-grid {
+    grid-template-columns: 1fr;
   }
 }
