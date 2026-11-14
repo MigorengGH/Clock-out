@@ -39,7 +39,11 @@
     'cloud-lightning': '<svg class="lucide lucide-cloud-lightning" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></svg>',
     'droplets': '<svg class="lucide lucide-droplets" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.09 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>',
     'wind': '<svg class="lucide lucide-wind" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7A2.5 2.5 0 1 1 19 12H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>',
-    'refresh-cw': '<svg class="lucide lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>'
+    'refresh-cw': '<svg class="lucide lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+    'chevron-up': '<svg class="lucide lucide-chevron-up" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+    'chevron-down': '<svg class="lucide lucide-chevron-down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+    'arrow-up': '<svg class="lucide lucide-arrow-up" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>',
+    'arrow-down': '<svg class="lucide lucide-arrow-down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>'
   };
 
   function renderLucideIcons(root = document) {
@@ -65,14 +69,14 @@
   let is24HourFormat = false;
   let currentTheme = 'light';
   let bangiPrayerTimes = null; // { Subuh, Syuruk, Zohor, Asar, Maghrib, Isyak } in minutes from midnight
+  let cachedHourlyForecast = null; // Hourly meteorological cache
 
   // DOM Elements
   const liveClockText = document.getElementById('liveClockText');
   const clockInInput = document.getElementById('clockInInput');
   const btnSetNow = document.getElementById('btnSetNow');
-  const btnMinus15 = document.getElementById('btnMinus15');
-  const btnPlus15 = document.getElementById('btnPlus15');
-  const presetChips = document.querySelectorAll('.chip');
+  const btnArrowUp = document.getElementById('btnArrowUp');
+  const btnArrowDown = document.getElementById('btnArrowDown');
   const punctualityBadge = document.getElementById('punctualityBadge');
   const punctualityBanner = document.getElementById('punctualityBanner');
   const bannerIconCol = document.getElementById('bannerIconCol');
@@ -118,6 +122,7 @@
   const weatherRainProb = document.getElementById('weatherRainProb');
   const weatherWind = document.getElementById('weatherWind');
   const weatherAdviceText = document.getElementById('weatherAdviceText');
+  const hourlyForecastStrip = document.getElementById('hourlyForecastStrip');
 
   // Initialization
   function init() {
@@ -214,17 +219,31 @@
   function setupEventListeners() {
     clockInInput.addEventListener('input', () => {
       localStorage.setItem('last_clock_in', clockInInput.value);
-      highlightActivePreset();
       updateAllCalculations();
     });
 
-    btnMinus15.addEventListener('click', () => {
-      adjustClockIn(-15);
+    // Keyboard Arrow Up / Down inside clockInInput
+    clockInInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        adjustClockIn(e.shiftKey ? 5 : 15);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        adjustClockIn(e.shiftKey ? -5 : -15);
+      }
     });
 
-    btnPlus15.addEventListener('click', () => {
-      adjustClockIn(15);
-    });
+    if (btnArrowUp) {
+      btnArrowUp.addEventListener('click', (e) => {
+        adjustClockIn(e.shiftKey ? 5 : 15);
+      });
+    }
+
+    if (btnArrowDown) {
+      btnArrowDown.addEventListener('click', (e) => {
+        adjustClockIn(e.shiftKey ? -5 : -15);
+      });
+    }
 
     btnSetNow.addEventListener('click', () => {
       const now = new Date();
@@ -232,17 +251,7 @@
       const m = now.getMinutes().toString().padStart(2, '0');
       clockInInput.value = `${h}:${m}`;
       localStorage.setItem('last_clock_in', clockInInput.value);
-      highlightActivePreset();
       updateAllCalculations();
-    });
-
-    presetChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        clockInInput.value = chip.dataset.time;
-        localStorage.setItem('last_clock_in', clockInInput.value);
-        highlightActivePreset();
-        updateAllCalculations();
-      });
     });
 
     formatToggle.addEventListener('click', () => {
@@ -251,6 +260,7 @@
       localStorage.setItem('clockout_format', is24HourFormat ? '24h' : '12h');
       updateAllCalculations();
       renderPrayerTimesUI();
+      renderHourlyForecast();
     });
 
     themeToggle.addEventListener('click', () => {
@@ -287,19 +297,7 @@
     const m = (newMins % 60).toString().padStart(2, '0');
     clockInInput.value = `${h}:${m}`;
     localStorage.setItem('last_clock_in', clockInInput.value);
-    highlightActivePreset();
     updateAllCalculations();
-  }
-
-  function highlightActivePreset() {
-    const currentVal = clockInInput.value;
-    presetChips.forEach(chip => {
-      if (chip.dataset.time === currentVal) {
-        chip.classList.add('active');
-      } else {
-        chip.classList.remove('active');
-      }
-    });
   }
 
   // Live Clock & Status Tick
@@ -411,6 +409,7 @@
     // 5. Update Progress & Prayer overlap
     updateProgressAndCountdown(new Date());
     updatePrayerShiftOverlap(inMinutes, stdOutMinutes);
+    renderHourlyForecast(inMinutes, stdOutMinutes);
   }
 
   function getOTTiers(inMinutes, stdOutMinutes) {
@@ -720,24 +719,94 @@
   }
 
   async function loadBangiPrayerTimes(forceRefresh = false) {
-    // 1. Calculate fallback immediately so UI is never blank
+    // 1. Initial calibrated fallback so UI is instant and never blank
     const fallback = calculateBangiAstronomicalPrayers();
     bangiPrayerTimes = fallback;
     renderPrayerTimesUI();
 
-    // 2. Fetch live official JAKIM timings from Aladhan API
+    // 2. Fetch official JAKIM SGR01 prayer times from api.waktusolat.app
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-      const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=Bangi&country=Malaysia&method=11`;
-      const res = await fetch(apiUrl, { signal: controller.signal });
+      // Primary: Official JAKIM SGR01 Takwim Solat Mirror
+      const res = await fetch('https://api.waktusolat.app/v2/solat/SGR01', { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (res.ok) {
         const data = await res.json();
-        if (data && data.data && data.data.timings) {
-          const t = data.data.timings;
+        if (data && data.prayers && data.prayers.length) {
+          const now = new Date();
+          const curDay = now.getDate();
+          const today = data.prayers.find(p => p.day === curDay) || data.prayers[curDay - 1] || data.prayers[0];
+
+          if (today) {
+            function unixToMins(ts) {
+              if (!ts) return null;
+              const d = new Date(ts * 1000);
+              return d.getHours() * 60 + d.getMinutes();
+            }
+
+            bangiPrayerTimes = {
+              Subuh: unixToMins(today.fajr) || fallback.Subuh,
+              Syuruk: unixToMins(today.syuruk) || fallback.Syuruk,
+              Zohor: unixToMins(today.dhuhr) || fallback.Zohor,
+              Asar: unixToMins(today.asr) || fallback.Asar,
+              Maghrib: unixToMins(today.maghrib) || fallback.Maghrib,
+              Isyak: unixToMins(today.isha) || fallback.Isyak
+            };
+
+            const zoneTag = document.getElementById('prayerZoneTag');
+            if (zoneTag) zoneTag.textContent = 'JAKIM SGR01 (Official e-Solat)';
+            renderPrayerTimesUI();
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      console.log('Primary JAKIM SGR01 mirror unreachable, trying e-Solat backup.');
+    }
+
+    // Secondary backup: official e-solat.gov.my API
+    try {
+      const controller2 = new AbortController();
+      const timeoutId2 = setTimeout(() => controller2.abort(), 4000);
+
+      const res2 = await fetch('https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=today&zone=SGR01', { signal: controller2.signal });
+      clearTimeout(timeoutId2);
+
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2 && data2.prayerTime && data2.prayerTime[0]) {
+          const pt = data2.prayerTime[0];
+          bangiPrayerTimes = {
+            Subuh: parseTimeString(pt.fajr) || fallback.Subuh,
+            Syuruk: parseTimeString(pt.syuruk) || fallback.Syuruk,
+            Zohor: parseTimeString(pt.dhuhr) || fallback.Zohor,
+            Asar: parseTimeString(pt.asr) || fallback.Asar,
+            Maghrib: parseTimeString(pt.maghrib) || fallback.Maghrib,
+            Isyak: parseTimeString(pt.isha) || fallback.Isyak
+          };
+          renderPrayerTimesUI();
+          return;
+        }
+      }
+    } catch (e2) {
+      console.log('e-Solat backup unreachable, trying Aladhan JAKIM method.');
+    }
+
+    // Tertiary backup: Aladhan with Method 17 (JAKIM)
+    try {
+      const controller3 = new AbortController();
+      const timeoutId3 = setTimeout(() => controller3.abort(), 4000);
+
+      const res3 = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Bangi&country=Malaysia&method=17', { signal: controller3.signal });
+      clearTimeout(timeoutId3);
+
+      if (res3.ok) {
+        const data3 = await res3.json();
+        if (data3 && data3.data && data3.data.timings) {
+          const t = data3.data.timings;
           bangiPrayerTimes = {
             Subuh: parseTimeString(t.Fajr) || fallback.Subuh,
             Syuruk: parseTimeString(t.Sunrise) || fallback.Syuruk,
@@ -749,9 +818,8 @@
           renderPrayerTimesUI();
         }
       }
-    } catch (e) {
-      // Offline or network block: astronomical fallback is already rendered
-      console.log('Using astronomical calculation for Bangi prayer times.');
+    } catch (e3) {
+      console.log('Using calibrated astronomical calculation for Bangi prayer times.');
     }
   }
 
@@ -905,12 +973,14 @@
     };
 
     applyWeatherData(defaultWeather);
+    cachedHourlyForecast = generateFallbackHourlyForecast();
+    renderHourlyForecast();
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${BANGI_LAT}&longitude=${BANGI_LNG}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FKuala_Lumpur`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${BANGI_LAT}&longitude=${BANGI_LNG}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FKuala_Lumpur&forecast_days=2`;
 
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -936,10 +1006,161 @@
         };
 
         applyWeatherData(weatherInfo);
+
+        // Parse hourly forecast from Open-Meteo
+        if (data.hourly && data.hourly.time && data.hourly.time.length) {
+          const now = new Date();
+          const curHour = now.getHours();
+          const hourlyTimes = data.hourly.time;
+
+          let startIndex = 0;
+          for (let i = 0; i < hourlyTimes.length; i++) {
+            const d = new Date(hourlyTimes[i]);
+            if (d.getHours() === curHour && Math.abs(d.getTime() - now.getTime()) < 3600 * 1000 * 2) {
+              startIndex = i;
+              break;
+            }
+          }
+
+          const parsedList = [];
+          for (let i = startIndex; i < Math.min(startIndex + 24, hourlyTimes.length); i++) {
+            const d = new Date(hourlyTimes[i]);
+            const hour = d.getHours();
+            const isNow = i === startIndex;
+            const hCode = data.hourly.weather_code[i] || 2;
+            const hWmo = WMO_WEATHER_MAP[hCode] || { desc: 'Partly Cloudy', icon: 'cloud-sun' };
+            const hTemp = Math.round(data.hourly.temperature_2m[i] || 30);
+            const hRain = data.hourly.precipitation_probability ? (data.hourly.precipitation_probability[i] || 0) : 0;
+
+            let timeLabel = '';
+            if (isNow) {
+              timeLabel = 'Now';
+            } else if (is24HourFormat) {
+              timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+            } else {
+              const period = hour >= 12 ? 'PM' : 'AM';
+              let h12 = hour % 12;
+              if (h12 === 0) h12 = 12;
+              timeLabel = `${h12} ${period}`;
+            }
+
+            parsedList.push({
+              hour,
+              hourMinutes: hour * 60,
+              timeLabel,
+              isNow,
+              temp: hTemp,
+              rainProb: hRain,
+              icon: hWmo.icon
+            });
+          }
+
+          if (parsedList.length > 0) {
+            cachedHourlyForecast = parsedList;
+            renderHourlyForecast();
+          }
+        }
       }
     } catch (err) {
-      console.log('Using default Bangi tropical meteorological dataset.');
+      console.log('Using default Bangi tropical meteorological dataset with hourly forecast.');
     }
+  }
+
+  function generateFallbackHourlyForecast() {
+    const list = [];
+    const now = new Date();
+    const curHour = now.getHours();
+
+    for (let i = 0; i < 24; i++) {
+      const targetHour = (curHour + i) % 24;
+      const isNow = i === 0;
+
+      let temp = 28;
+      if (targetHour >= 4 && targetHour <= 7) temp = 24 + Math.round((targetHour - 4) * 0.8);
+      else if (targetHour > 7 && targetHour <= 14) temp = 26 + Math.round((targetHour - 7) * 1.0);
+      else if (targetHour > 14 && targetHour <= 17) temp = 33 - Math.round((targetHour - 14) * 1.0);
+      else if (targetHour > 17 && targetHour <= 21) temp = 30 - Math.round((targetHour - 17) * 0.8);
+      else temp = 26;
+
+      let rainProb = 15;
+      let icon = 'cloud-sun';
+      if (targetHour >= 13 && targetHour <= 18) {
+        rainProb = 65;
+        icon = 'cloud-rain';
+      } else if (targetHour >= 19 && targetHour <= 22) {
+        rainProb = 35;
+        icon = 'cloud-sun';
+      } else if (targetHour >= 23 || targetHour <= 5) {
+        rainProb = 10;
+        icon = 'moon';
+      }
+
+      let timeLabel = '';
+      if (isNow) {
+        timeLabel = 'Now';
+      } else if (is24HourFormat) {
+        timeLabel = `${targetHour.toString().padStart(2, '0')}:00`;
+      } else {
+        const period = targetHour >= 12 ? 'PM' : 'AM';
+        let h12 = targetHour % 12;
+        if (h12 === 0) h12 = 12;
+        timeLabel = `${h12} ${period}`;
+      }
+
+      list.push({
+        hour: targetHour,
+        hourMinutes: targetHour * 60,
+        timeLabel,
+        isNow,
+        temp,
+        rainProb,
+        icon
+      });
+    }
+    return list;
+  }
+
+  function renderHourlyForecast(inMinutes = null, stdOutMinutes = null) {
+    if (!hourlyForecastStrip) return;
+    if (inMinutes === null) inMinutes = parseTimeString(clockInInput.value) || (8 * 60);
+    if (stdOutMinutes === null) stdOutMinutes = inMinutes + REGULAR_WORK_MINUTES;
+
+    const hourlyList = cachedHourlyForecast || generateFallbackHourlyForecast();
+
+    hourlyForecastStrip.innerHTML = '';
+    hourlyList.forEach(item => {
+      const slot = document.createElement('div');
+      slot.className = 'hourly-slot' + (item.isNow ? ' is-now' : '');
+
+      let shiftBadge = '';
+      const hourMins = item.hourMinutes;
+
+      // Highlight shift points
+      if (Math.abs(hourMins - inMinutes) <= 30) {
+        slot.classList.add('shift-in-hour');
+        shiftBadge = '<span class="hourly-shift-badge badge-in">Clock In</span>';
+      } else if (Math.abs(hourMins - stdOutMinutes) <= 30) {
+        slot.classList.add('shift-out-hour');
+        shiftBadge = '<span class="hourly-shift-badge badge-out">Clock Out</span>';
+      } else if (hourMins > stdOutMinutes && hourMins <= stdOutMinutes + 4 * 60) {
+        slot.classList.add('shift-ot-hour');
+      }
+
+      slot.innerHTML = `
+        <span class="hourly-time-label">${item.timeLabel}</span>
+        <div class="hourly-icon-wrap">
+          <i data-lucide="${item.icon}" class="lucide-icon"></i>
+        </div>
+        <span class="hourly-rain-prob ${item.rainProb >= 25 ? 'rain-highlight' : ''}">
+          ${item.rainProb >= 25 ? item.rainProb + '%' : ''}
+        </span>
+        <span class="hourly-temp-label">${item.temp}°</span>
+        ${shiftBadge}
+      `;
+      hourlyForecastStrip.appendChild(slot);
+    });
+
+    renderLucideIcons(hourlyForecastStrip);
   }
 
   function applyWeatherData(w) {

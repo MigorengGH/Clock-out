@@ -61,7 +61,7 @@
               <i data-lucide="compass" class="lucide-icon section-icon prayer-icon"></i>
               Waktu Solat Bangi
             </h2>
-            <span class="tag tag-amber" id="prayerZoneTag">JAKIM SGR01</span>
+            <span class="tag tag-amber" id="prayerZoneTag">JAKIM SGR01 (Official e-Solat)</span>
           </div>
           <div class="next-prayer-pill" id="nextPrayerPill">
             <span class="next-prayer-label">Next:</span>
@@ -119,7 +119,7 @@
               <i data-lucide="cloud-sun" class="lucide-icon section-icon weather-icon"></i>
               Cuaca Bangi (Weather)
             </h2>
-            <span class="tag tag-blue" id="weatherSourceTag">Live Forecast</span>
+            <span class="tag tag-blue" id="weatherSourceTag" title="Live weather telemetry sourced from Open-Meteo & WMO Meteorological Models">Source: Open-Meteo / WMO</span>
           </div>
           <span class="weather-date-pill" id="weatherDatePill">Today</span>
         </div>
@@ -165,6 +165,20 @@
             </div>
           </div>
 
+          <!-- Apple Weather Style: Hourly Forecast by Time -->
+          <div class="hourly-forecast-section">
+            <div class="hourly-forecast-header">
+              <span class="hourly-header-title">
+                <i data-lucide="clock" class="lucide-icon"></i>
+                HOURLY FORECAST BY TIME
+              </span>
+              <span class="hourly-header-info" id="hourlyForecastInfo">Open-Meteo • Bangi (2.93°N, 101.78°E)</span>
+            </div>
+            <div class="hourly-scroll-strip" id="hourlyForecastStrip">
+              <!-- Dynamically populated hourly weather slots -->
+            </div>
+          </div>
+
           <div class="weather-shift-alert" id="weatherShiftAlert">
             <i data-lucide="shield-check" class="lucide-icon"></i>
             <span id="weatherAdviceText">Checking commute & shift weather outlook...</span>
@@ -199,32 +213,28 @@
           </div>
         </div>
 
-        <!-- Time Picker Container -->
+        <!-- Time Picker Container with Prominent Apple Arrow Steppers -->
         <div class="input-group-wrapper">
-          <label for="clockInInput" class="input-label">Clock-In Time (7:00 AM – 9:30 AM cutoff):</label>
+          <div class="input-label-row">
+            <label for="clockInInput" class="input-label">Clock-In Time:</label>
+            <span class="input-hint-label">Window: 7:00 AM – 9:30 AM</span>
+          </div>
           <div class="time-input-container">
-            <button id="btnMinus15" class="icon-btn time-step-btn" title="Minus 15 minutes">-15m</button>
-            <input type="time" id="clockInInput" class="time-input" required>
-            <button id="btnPlus15" class="icon-btn time-step-btn" title="Plus 15 minutes">+15m</button>
-            <button id="btnSetNow" class="btn btn-secondary" title="Set to current local time">
+            <div class="apple-stepper-control">
+              <button id="btnArrowDown" class="stepper-btn stepper-down" title="Decrease Clock-In Time by 15 mins (Shift+Click for 5 mins)" aria-label="Decrease clock-in time">
+                <i data-lucide="arrow-down" class="lucide-icon"></i>
+              </button>
+              <input type="time" id="clockInInput" class="time-input" required>
+              <button id="btnArrowUp" class="stepper-btn stepper-up" title="Increase Clock-In Time by 15 mins (Shift+Click for 5 mins)" aria-label="Increase clock-in time">
+                <i data-lucide="arrow-up" class="lucide-icon"></i>
+              </button>
+            </div>
+            <button id="btnSetNow" class="btn btn-secondary apple-now-btn" title="Set to current local time">
               <i data-lucide="map-pin" class="lucide-icon"></i>
-              Right Now
+              <span>Right Now</span>
             </button>
           </div>
-        </div>
-
-        <!-- Quick preset chips -->
-        <div class="quick-presets">
-          <span class="presets-label">Punctuality Presets:</span>
-          <div class="preset-chips">
-            <button class="chip chip-ontime" data-time="07:00">07:00 AM</button>
-            <button class="chip chip-ontime" data-time="07:30">07:30 AM</button>
-            <button class="chip chip-ontime" data-time="08:00">08:00 AM</button>
-            <button class="chip chip-ontime" data-time="08:30">08:30 AM</button>
-            <button class="chip chip-ontime" data-time="09:00">09:00 AM</button>
-            <button class="chip chip-cutoff" data-time="09:30" title="Last on-time clock-in minute">09:30 AM (Cutoff)</button>
-            <button class="chip chip-late" data-time="09:45" title="Test late arrival status">09:45 AM (Late Demo)</button>
-          </div>
+          <div class="stepper-hint">Use <strong>↓ / ↑ arrows</strong> to adjust by 15 mins (hold Shift for 5 mins). Keyboard arrow keys also supported.</div>
         </div>
 
         <!-- Live Shift Progress Widget -->
@@ -376,9 +386,9 @@
         <div class="rule-col">
           <div class="rule-title">
             <i data-lucide="map-pin" class="lucide-icon"></i>
-            <strong>Bangi Workplace Sync</strong>
+            <strong>Data Sources (Bangi)</strong>
           </div>
-          <p>Integrated with official <strong>JAKIM SGR01</strong> Waktu Solat & real-time Bangi meteorological weather telemetry.</p>
+          <p><strong>Prayer Times:</strong> Official JAKIM e-Solat Takwim (Zone SGR01).<br><strong>Weather:</strong> Open-Meteo & WMO Global Numerical Prediction Models (Bangi 2.9288° N, 101.7801° E).</p>
         </div>
       </div>
       <div class="footer-bottom-line">
